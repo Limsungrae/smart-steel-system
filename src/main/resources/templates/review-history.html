@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>검토 이력 | SteelForecast</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/review-history.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+<div class="layout">
+
+    <div th:replace="~{sidebar :: sidebarFragment}"></div>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="top-title">
+                <i class="fa-solid fa-chart-simple"></i>
+                <span>AI 생산·재고 리스크 모니터링</span>
+            </div>
+            <div class="top-actions">
+                <button class="top-icon alarm"><i class="fa-regular fa-bell"></i><span>3</span></button>
+                <button class="top-icon"><i class="fa-regular fa-circle-question"></i></button>
+                <div class="user-box">
+                    <div class="user-avatar"><i class="fa-regular fa-user"></i></div>
+                    <div>
+                        <strong>홍길동님</strong>
+                        <p>생산관리팀 팀장</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="page-head">
+                <p class="breadcrumb">리스크 점검 &gt; 검토 이력</p>
+                <h1>검토 이력 조회</h1>
+                <p class="desc">현업 담당자가 리스크 분석 결과를 확인하고 최종 판단 및 코멘트를 입력하여 저장한 비즈니스 기록입니다.</p>
+            </div>
+
+            <section class="summary-cards" th:if="${summary}">
+                <div class="card bg-blue">
+                    <div class="card-info">
+                        <span>전체 검토 기록</span>
+                        <strong th:text="${summary.totalCount} + '건'">18건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-database"></i></div>
+                </div>
+                <div class="card bg-red">
+                    <div class="card-info">
+                        <span>우선 검토</span>
+                        <strong th:text="${summary.urgentReviewCount} + '건'">5건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                </div>
+                <div class="card bg-orange">
+                    <div class="card-info">
+                        <span>생산계획 상향 검토</span>
+                        <strong th:text="${summary.planUpReviewCount} + '건'">3건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                </div>
+                <div class="card bg-green">
+                    <div class="card-info">
+                        <span>재고 보강 검토</span>
+                        <strong th:text="${summary.stockAddReviewCount} + '건'">2건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+                </div>
+            </section>
+
+            <div class="main-grid">
+                <section class="panel list-panel">
+                    <div class="panel-head">
+                        <h2>검토 저장 이력</h2>
+                        <div class="search-box">
+                            <input type="text" placeholder="품목 또는 담당자 검색..." />
+                            <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap">
+                        <table class="history-table">
+                            <thead>
+                            <tr>
+                                <th>저장일시</th>
+                                <th>대상월</th>
+                                <th>품목</th>
+                                <th>위험도</th>
+                                <th>검토 방향</th>
+                                <th>최종 판단</th>
+                                <th>조정 여부</th>
+                                <th>담당자</th>
+                                <th>작업</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="history : ${historyList}"
+                                th:classappend="${selected != null && selected.id == history.id} ? 'active-row'">
+                                <td th:text="${#temporals.format(history.savedAt, 'yyyy.MM.dd HH:mm')}">2026.05.20 14:32</td>
+                                <td th:text="${history.forecastMonth}">2026-05</td>
+                                <td th:text="${history.itemCode}" style="font-weight: bold; color: #1e3a8a;">CR</td>
+                                <td>
+                    <span th:text="${history.riskScore}"
+                          th:class="'score-badge ' + (${history.riskGrade == '높음'} ? 'high' : (${history.riskGrade == '보통'} ? 'medium' : 'low'))">82</span>
+                                </td>
+                                <td th:text="${history.reviewDirection}">생산계획 상향 검토</td>
+                                <td>
+                    <span th:text="${history.finalJudgment}"
+                          th:class="'tag ' + (${history.finalJudgment == '우선 검토'} ? 'danger' : 'normal')">우선 검토</span>
+                                </td>
+                                <td>
+                    <span th:text="${history.adjustmentRequired}"
+                          th:class="'tag ' + (${history.adjustmentRequired == '현업 판단 필요'} ? 'warning' : 'success')">현업 판단 필요</span>
+                                </td>
+                                <td th:text="${history.reviewerName}">홍길동</td>
+                                <td>
+                                    <a th:href="@{/history/list(selectedId=${history.id})}" class="view-btn">상세보기</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="panel detail-panel" th:if="${selected}">
+                    <div class="panel-head">
+                        <h2>선택 기록 상세 명세</h2>
+                        <span class="save-time" th:text="'저장 시점: ' + ${#temporals.format(selected.savedAt, 'yyyy.MM.dd HH:mm')}">2026.05.20 14:32</span>
+                    </div>
+
+                    <div class="snapshot-box">
+                        <h3>계산 스냅샷 <span th:text="'(' + ${selected.forecastMonth} + ')'">(2026-05)</span></h3>
+                        <div class="mini-metrics">
+                            <div><span>전국 AI 예측</span><b th:text="${#numbers.formatDecimal(selected.nationalForecast, 0, 'COMMA', 0, 'POINT')}">686</b><em>톤</em></div>
+                            <div><span>회사 AI 예측</span><b th:text="${#numbers.formatDecimal(selected.companyForecast, 0, 'COMMA', 1, 'POINT')}">68.6</b><em>톤</em></div>
+                            <div><span>기존 계획</span><b th:text="${#numbers.formatDecimal(selected.plannedProduction, 0, 'COMMA', 0, 'POINT')}">65</b><em>톤</em></div>
+                            <div><span>현재 재고</span><b th:text="${#numbers.formatDecimal(selected.currentStock, 0, 'COMMA', 0, 'POINT')}">8</b><em>톤</em></div>
+                            <div><span>예상 월말 재고</span><b th:text="${#numbers.formatDecimal(selected.expectedEndStock, 0, 'COMMA', 1, 'POINT')}">4.4</b><em>톤</em></div>
+                            <div th:class="${selected.stockGap < 0} ? 'danger-metric' : ''">
+                                <span>재고 차이</span><b th:text="${selected.stockGap > 0 ? '+' : ''} + ${#numbers.formatDecimal(selected.stockGap, 0, 'COMMA', 1, 'POINT')}">-2.6</b><em>톤</em>
+                            </div>
+                        </div>
+                        <p th:text="'회사 AI 예측 = ' + ${selected.nationalForecast} + ' × 시장점유율 | 예상 월말 재고 = ' + ${selected.currentStock} + ' + ' + ${selected.plannedProduction} + ' - ' + ${selected.companyForecast} + ' = ' + ${selected.expectedEndStock}">공식 가이드라인 라인</p>
+                    </div>
+
+                    <div class="decision-box">
+                        <dl>
+                            <div>
+                                <dt>주요 신호</dt>
+                                <dd>
+                                    <span th:each="signal : ${#strings.arraySplit(selected.mainSignals, ',')}" th:text="${#strings.trim(signal)}">계획 부족</span>
+                                </dd>
+                            </div>
+                            <div><dt>검토 방향</dt><dd class="red-text" th:text="${selected.reviewDirection}">생산계획 상향 검토</dd></div>
+                            <div><dt>최종 판단</dt><dd><span class=\"tag danger\" th:text="${selected.finalJudgment}">우선 검토</span></dd></div>
+                            <div><dt>조정 필요 여부</dt><dd><span class=\"tag warning\" th:text="${selected.adjustmentRequired}">현업 판단 필요</span></dd></div>
+                            <div><dt>담당자</dt><dd><strong th:text="${selected.reviewerName}">홍길동 팀장</strong></dd></div>
+                        </dl>
+                    </div>
+
+                    <div class="comment-box">
+                        <h3>담당자 코멘트</h3>
+                        <div class="comment-text">
+                            <p th:text="${selected.reviewerComment}">고객사 발주 및 설비 일정 확인 후 최종 결정</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

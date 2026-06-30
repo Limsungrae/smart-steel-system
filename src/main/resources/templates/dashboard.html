@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteelForecast Dashboard</title>
+
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+<div class="app">
+
+    <div th:replace="~{sidebar :: sidebarFragment}"></div>
+
+    <main class="main">
+
+        <header class="topbar">
+            <div></div>
+
+            <div class="top-actions">
+                <button class="icon-btn">
+                    <i class="fa-regular fa-bell"></i>
+                    <span th:if="${highRiskCount > 0}" th:text="${highRiskCount}">3</span>
+                </button>
+
+                <div class="user-box">
+                    <div class="user-icon">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                    <div>
+                        <strong>홍길동님</strong>
+                        <p>관리자</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+
+            <div class="page-title">
+                <div>
+                    <h1>대시보드</h1>
+                    <p>철강 수요 현황과 예측 정보를 한눈에 확인하세요.</p>
+                </div>
+
+                <button class="date-btn">
+                    <i class="fa-regular fa-calendar"></i>
+                    <span th:text="${targetMonth != null ? targetMonth : '2025.05'}">2025.05</span>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+            </div>
+
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div>
+                        <p>총 예측 수요</p>
+                        <h2>[[${totalForecastDemand != null ? #numbers.formatDecimal(totalForecastDemand, 1, 'COMMA', 1, 'POINT') : '1,234.5'}]] <span>만톤</span></h2>
+                        <small class="up">▲ 8.2% <em>(전월 대비)</em></small>
+                    </div>
+                    <div class="kpi-icon blue">
+                        <i class="fa-solid fa-chart-simple"></i>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div>
+                        <p>총 현재 재고</p>
+                        <h2>[[${totalCurrentStock != null ? #numbers.formatDecimal(totalCurrentStock, 1, 'COMMA', 1, 'POINT') : '1,058.0'}]] <span>만톤</span></h2>
+                        <small class="up navy">▲ 1.6% <em>(전월 대비)</em></small>
+                    </div>
+                    <div class="kpi-icon navy">
+                        <i class="fa-solid fa-layer-group"></i>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div>
+                        <p>총 부족 예상량</p>
+                        <h2 class="danger">[[${totalShortage != null ? #numbers.formatDecimal(totalShortage, 1, 'COMMA', 1, 'POINT') : '-176.5'}]] <span>만톤</span></h2>
+                        <small class="down">▼ -6.8% <em>(전월 대비)</em></small>
+                    </div>
+                    <div class="kpi-icon red">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div>
+                        <p>위험 품목 수</p>
+                        <h2>[[${highRiskCount != null ? highRiskCount : '4'}]] <span>개</span></h2>
+                        <small class="up">▲ 1개 <em>(전월 대비)</em></small>
+                    </div>
+                    <div class="kpi-icon purple">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                </div>
+            </section>
+
+            <section class="main-grid">
+                <div class="panel risk-panel">
+                    <div class="panel-header">
+                        <h3>품목별 위험 현황</h3>
+                        <select>
+                            <option>전체 품목</option>
+                            <option>열연강판</option>
+                            <option>냉연강판</option>
+                            <option>아연도강판</option>
+                        </select>
+                    </div>
+
+                    <div class="risk-table">
+                        <div class="risk-head">
+                            <span>품목</span>
+                            <span>예측 수요</span>
+                            <span>현재 재고</span>
+                            <span>부족 예상량</span>
+                            <span>위험도</span>
+                        </div>
+
+                        <div class="risk-scroll">
+                            <div class="risk-row" th:each="row : ${riskTableData}">
+                                <strong th:text="${row.itemName}">열연강판 (HR)</strong>
+                                <span th:text="${#numbers.formatDecimal(row.forecastDemand, 1, 1)}">567.8</span>
+                                <span th:text="${#numbers.formatDecimal(row.currentStock, 1, 1)}">420.3</span>
+                                <span th:text="${row.shortage >= 0 ? '+' : ''} + ${#numbers.formatDecimal(row.shortage, 1, 1)}"
+                                      th:class="${row.shortage < 0 ? 'minus' : 'plus'}">-147.5</span>
+                                <em th:text="${row.riskGrade}"
+                                    th:class="'risk ' + (${row.riskGrade == '위험'} ? 'danger-bg' : (${row.riskGrade == '주의'} ? 'warn-bg' : 'safe-bg'))">위험</em>
+                            </div>
+
+                            <th:block th:remove="all">
+                                <div class="risk-row">
+                                    <strong>냉연강판 (CR)</strong>
+                                    <span>321.4</span>
+                                    <span>210.2</span>
+                                    <span class="minus">-111.2</span>
+                                    <em class="risk danger-bg">위험</em>
+                                </div>
+                                <div class="risk-row">
+                                    <strong>아연도강판 (GI)</strong>
+                                    <span>198.7</span>
+                                    <span>150.1</span>
+                                    <span class="minus">-48.6</span>
+                                    <em class="risk warn-bg">주의</em>
+                                </div>
+                                <div class="risk-row">
+                                    <strong>후판 (PL)</strong>
+                                    <span>86.3</span>
+                                    <span>92.5</span>
+                                    <span class="plus">+6.2</span>
+                                    <em class="risk safe-bg">안정</em>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel chart-panel">
+                    <div class="panel-header">
+                        <h3>월별 총 예측 수요 추이</h3>
+                        <div class="chart-legend">
+                            <span class="legend-dot"></span>
+                            <p>예측 수요</p>
+                            <em>단위: 만톤</em>
+                        </div>
+                    </div>
+
+                    <div class="line-chart">
+                        <svg viewBox="0 0 700 260" preserveAspectRatio="none">
+                            <defs>
+                                <linearGradient id="dashboardArea" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#2563eb" stop-opacity="0.18"/>
+                                    <stop offset="100%" stop-color="#2563eb" stop-opacity="0"/>
+                                </linearGradient>
+                            </defs>
+
+                            <polygon
+                                    points="0,165 80,155 160,125 240,145 320,80 400,130 480,115 560,100 620,120 700,110 700,260 0,260"
+                                    fill="url(#dashboardArea)"
+                            />
+
+                            <polyline
+                                    points="0,165 80,155 160,125 240,145 320,80 400,130 480,115 560,100 620,120 700,110"
+                                    fill="none"
+                                    stroke="#2563eb"
+                                    stroke-width="4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                            />
+
+                            <polyline
+                                    points="0,185 80,145 160,135 240,120 320,110 400,98 480,105 560,90 620,72 700,55"
+                                    fill="none"
+                                    stroke="#15aabf"
+                                    stroke-width="3"
+                                    stroke-dasharray="8 8"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                            />
+
+                            <g class="dots">
+                                <circle cx="0" cy="165" r="4"/>
+                                <circle cx="80" cy="155" r="4"/>
+                                <circle cx="160" cy="125" r="4"/>
+                                <circle cx="240" cy="145" r="4"/>
+                                <circle cx="320" cy="80" r="6"/>
+                                <circle cx="400" cy="130" r="4"/>
+                                <circle cx="480" cy="115" r="4"/>
+                                <circle cx="560" cy="100" r="4"/>
+                                <circle cx="620" cy="120" r="4"/>
+                                <circle cx="700" cy="110" r="4"/>
+                            </g>
+                        </svg>
+
+                        <div class="chart-labels">
+                            <th:block th:each="label : ${chartMonthLabels}">
+                                <span th:text="${label}">2024.08</span>
+                            </th:block>
+                            <th:block th:remove="all">
+                                <span>2024.09</span><span>2024.10</span><span>2024.11</span><span>2024.12</span>
+                                <span>2025.01</span><span>2025.02</span><span>2025.03</span><span>2025.04</span><span>2025.05</span>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bottom-grid">
+                <div class="panel top-risk">
+                    <h3>재고 부족 위험 TOP 5</h3>
+
+                    <div class="rank-row" th:each="rank, iter : ${topRiskData}">
+                        <span th:text="${iter.count}">1</span>
+                        <p th:text="${rank.itemName}">열연강판 (HR)</p>
+                        <div><i th:style="|width: ${rank.progressPercent}%|"></i></div>
+                        <strong th:text="${rank.shortageAmount >= 0 ? '+' : ''} + ${#numbers.formatDecimal(rank.shortageAmount, 1, 1)} + ' 만톤'">-147.5 만톤</strong>
+                    </div>
+
+                    <th:block th:remove="all">
+                        <div class="rank-row"><span>2</span><p>냉연강판 (CR)</p><div><i style="width: 74%"></i></div><strong>-111.2 만톤</strong></div>
+                        <div class="rank-row"><span>3</span><p>아연도강판 (GI)</p><div><i style="width: 44%"></i></div><strong>-48.6 만톤</strong></div>
+                        <div class="rank-row"><span>4</span><p>후판 (PL)</p><div><i style="width: 24%"></i></div><strong>+6.2 만톤</strong></div>
+                        <div class="rank-row"><span>5</span><p>전기강판 (EGI)</p><div><i style="width: 14%"></i></div><strong>+2.4 만톤</strong></div>
+                    </th:block>
+                </div>
+
+                <div class="panel bar-panel">
+                    <div class="panel-header">
+                        <h3>전월 대비 품목별 수요 변화</h3>
+                        <span>단위: %</span>
+                    </div>
+
+                    <div class="bar-chart">
+                        <div th:each="chart : ${barChartData}">
+                            <b th:text="${chart.changeRate > 0 ? '+' : ''} + ${chart.changeRate} + '%'">+9.3%</b>
+                            <span th:style="|height: ${chart.barHeight}%|"></span>
+                            <p th:text="${chart.itemName}">열연강판</p>
+                        </div>
+
+                        <th:block th:remove="all">
+                            <div><b>+7.4%</b><span style="height: 64%"></span><p>냉연강판</p></div>
+                            <div><b>+5.6%</b><span style="height: 48%"></span><p>아연도강판</p></div>
+                        </th:block>
+                    </div>
+                </div>
+
+                <div class="panel insight-panel">
+                    <h3>수요 인사이트</h3>
+
+                    <div class="insight-list">
+                        <div class="insight-item" th:each="insight : ${insights}">
+                            <i th:class="'fa-solid ' + (${insight.type == 'TREND'} ? 'fa-solid fa-arrow-trend-up' : (${insight.type == 'BULLSEYE'} ? 'fa-solid fa-bullseye' : 'fa-solid fa-database'))"></i>
+                            <p th:text="${insight.message}">열연강판 수요가 전월 대비 9.3% 증가하여 상승세를 주도하고 있습니다.</p>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/plan/result}">더 많은 인사이트 보기 <i class="fa-solid fa-arrow-right"></i></a>
+                </div>
+            </section>
+
+            <div class="notice">
+                <div>
+                    <i class="fa-solid fa-info"></i>
+                    <strong>공지사항</strong>
+                    <span th:text="${noticeMessage != null ? noticeMessage : '열연강판(HR)의 재고 부족 위험이 높습니다. 생산 계획을 조정하거나 재고 확보를 권장합니다.'}">열연강판(HR)의 재고 부족 위험이 높습니다. 생산 계획을 조정하거나 재고 확보를 권장합니다.</span>
+                </div>
+
+                <a th:href="@{/model/update-schedule}">모델 정보 및 업데이트 일정 보기 <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/sidebar.js}"></script>
+</body>
+</html>

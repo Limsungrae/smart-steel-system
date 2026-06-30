@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>계정 설정 | SteelForecast</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/account-setting.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+<div class="app">
+
+    <div th:replace="~{sidebar :: sidebarFragment}"></div>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="top-title">
+                <i class="fa-solid fa-gear"></i>
+                <span>계정 설정</span>
+            </div>
+
+            <div class="top-actions">
+                <button class="top-icon alarm">
+                    <i class="fa-regular fa-bell"></i>
+                    <span th:if="${highRiskCount > 0}" th:text="${highRiskCount}">3</span>
+                </button>
+                <div class="user-box">
+                    <div class="user-avatar">PM</div>
+                    <div>
+                        <strong th:text="${user.name} + '님'">홍길동님</strong>
+                        <p th:text="${user.department} + ' ' + ${user.position}">생산관리팀 팀장</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="content" th:if="${user}">
+            <div class="page-head">
+                <div>
+                    <p class="breadcrumb">설정 &gt; 계정 설정</p>
+                    <h1>계정 설정</h1>
+                    <p class="desc">사용자 본인의 기본 정보 관리 및 비밀번호 변경, 시스템 보안 설정을 제어합니다.</p>
+                </div>
+            </div>
+
+            <div class="alert alert-success" th:if="${param.success}" style="margin-bottom: 20px; padding: 12px; background: #dcfce7; color: #166534; border-radius: 6px;">
+                <i class="fa-solid fa-circle-check"></i> 계정 정보 및 변경사항이 안전하게 저장되었습니다.
+            </div>
+            <div class="alert alert-danger" th:if="${param.error}" style="margin-bottom: 20px; padding: 12px; background: #fee2e2; color: #991b1b; border-radius: 6px;">
+                <i class="fa-solid fa-circle-exclamation"></i> 입력한 현재 비밀번호가 일치하지 않거나 유효하지 않습니다.
+            </div>
+
+            <section class="main-grid">
+                <form th:action="@{/settings/update}" method="post" class="panel form-panel">
+                    <h2>기본 프로필 설정</h2>
+
+                    <div class="input-grid">
+                        <label>이름
+                            <input type="text" name="name" th:value="${user.name}" required />
+                        </label>
+
+                        <label>이메일 주소 (계정 ID)
+                            <input type="email" name="email" th:value="${user.email}" readonly style="background-color: #f1f5f9; color: #64748b;" />
+                        </label>
+                    </div>
+
+                    <hr class="form-divider" />
+
+                    <h2>비밀번호 변경</h2>
+                    <p class="form-desc">보안을 위해 비밀번호는 8자 이상, 영문과 숫자 조합을 권장합니다.</p>
+
+                    <div class="input-grid">
+                        <label>현재 비밀번호
+                            <input type="password" name="currentPassword" placeholder="현재 비밀번호 입력" />
+                        </label>
+
+                        <label>새 비밀번호
+                            <input type="password" name="newPassword" placeholder="새로운 비밀번호 입력" />
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <a th:href="@{/mypage}" class="cancel-btn">취소</a>
+                        <button type="submit" class="save-btn"><i class="fa-regular fa-floppy-disk"></i> 변경사항 저장</button>
+                    </div>
+                </form>
+
+                <div class="side-column">
+                    <article class="panel info-card">
+                        <div class="card-head">
+                            <h2>현재 소속 및 권한</h2>
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <div class="info-list">
+                            <div><span>소속 부서</span><b th:text="${user.department}">생산관리팀</b></div>
+                            <div><span>직책</span><b th:text="${user.position}">팀장</b></div>
+                            <div><span>접근 권한</span><b class="blue" th:text="${user.role}">관리자</b></div>
+                            <div><span>담당 품목</span><b th:text="${user.assignedItems}">HR / CR / GI</b></div>
+                        </div>
+                    </article>
+
+                    <article class="panel system-card">
+                        <div class="card-head">
+                            <div>
+                                <h2>시스템 정보</h2>
+                                <p>서비스 버전과 기본 운영 정보를 표시합니다.</p>
+                            </div>
+                            <i class="fa-solid fa-circle-info"></i>
+                        </div>
+
+                        <div class="system-boxes" th:if="${systemInfo}">
+                            <div>
+                                <span>서비스 버전</span>
+                                <strong th:text="${systemInfo.version}">SteelForecast v1.0</strong>
+                            </div>
+                            <div>
+                                <span>최종 업데이트</span>
+                                <strong th:text="${systemInfo.lastUpdated}">2026.05.15</strong>
+                            </div>
+                            <div>
+                                <span>관리 부서</span>
+                                <strong th:text="${systemInfo.managedBy}">AI 생산관리 프로젝트팀</strong>
+                            </div>
+                            <div>
+                                <span>문의 메일</span>
+                                <strong th:text="${systemInfo.adminEmail}">admin@steelforecast.com</strong>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

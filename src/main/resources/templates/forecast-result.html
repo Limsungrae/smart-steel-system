@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>리스크 분석 결과 | SteelForecast</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/forecast-result.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+<div class="layout">
+
+    <div th:replace="~{sidebar :: sidebarFragment}"></div>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="top-title">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>AI 생산·재고 리스크 모니터링</span>
+            </div>
+
+            <div class="top-actions">
+                <button class="top-icon alarm">
+                    <i class="fa-regular fa-bell"></i>
+                    <span>3</span>
+                </button>
+                <button class="top-icon">
+                    <i class="fa-regular fa-circle-question"></i>
+                </button>
+                <div class="user-box">
+                    <div class="user-avatar">PM</div>
+                    <div>
+                        <strong>홍길동님</strong>
+                        <p>생산관리팀 팀장</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="page-header">
+                <h1>점검 결과 대시보드</h1>
+                <p>입력한 운영 기준 데이터와 AI 수요 예측 결과를 융합하여 실시간으로 계산된 리스크 인덱스입니다.</p>
+            </div>
+
+            <section class="summary-cards">
+                <div class="card status-card red">
+                    <div class="card-info">
+                        <span>우선 검토 품목</span>
+                        <strong th:text="${highRiskCount + '건'}">1건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                </div>
+
+                <div class="card status-card orange">
+                    <div class="card-info">
+                        <span>주의 필요 품목</span>
+                        <strong th:text="${normalRiskCount + '건'}">1건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+                </div>
+
+                <div class="card status-card blue">
+                    <div class="card-info">
+                        <span>계획 유지 품목</span>
+                        <strong th:text="${keepPlanCount + '건'}">1건</strong>
+                    </div>
+                    <div class="card-icon"><i class="fa-solid fa-square-check"></i></div>
+                </div>
+            </section>
+
+            <div class="grid-container">
+                <section class="panel table-panel">
+                    <div class="panel-header">
+                        <h2>품목별 리스크 분석 목록</h2>
+                        <button class="btn save-btn"><i class="fa-regular fa-floppy-disk"></i> 전체 결과 저장</button>
+                    </div>
+
+                    <section class="table-container">
+                        <table class="result-table">
+                            <thead>
+                            <tr>
+                                <th>품목</th>
+                                <th>전국 AI 예측</th>
+                                <th>회사 AI 예측</th>
+                                <th>시장지분</th>
+                                <th>기존 계획</th>
+                                <th>예상 월말재고</th>
+                                <th>목표재고</th>
+                                <th>재고 차이</th>
+                                <th>위험 지수</th>
+                                <th>주요 신호</th>
+                                <th>검토 방향</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="res : ${results}">
+                                <td th:text="${res.itemCode}" style="font-weight: bold; color: #1e3a8a;">CR</td>
+                                <td th:text="${#numbers.formatDecimal(res.nationalForecast, 0, 'COMMA', 0, 'POINT')} + '톤'">686톤</td>
+                                <td th:text="${#numbers.formatDecimal(res.companyForecast, 0, 'COMMA', 1, 'POINT')} + '톤'">68.6톤</td>
+                                <td th:text="${res.marketShare} + '%'">10%</td>
+                                <td th:text="${#numbers.formatDecimal(res.plannedProduction, 0, 'COMMA', 0, 'POINT')} + '톤'">65톤</td>
+
+                                <td th:text="${#numbers.formatDecimal(res.expectedEndStock, 0, 'COMMA', 1, 'POINT')} + '톤'"
+                                    th:classappend="${res.expectedEndStock < 5} ? 'red-text'">4.4톤</td>
+
+                                <td th:text="${#numbers.formatDecimal(res.targetStock, 0, 'COMMA', 0, 'POINT')} + '톤'">7톤</td>
+
+                                <td th:text="${res.stockGap > 0 ? '+' : ''} + ${#numbers.formatDecimal(res.stockGap, 0, 'COMMA', 1, 'POINT')} + '톤'"
+                                    th:class="${res.stockGap < 0} ? 'red-text' : 'blue-text'">-2.6톤</td>
+
+                                <td>
+                      <span th:text="${res.riskScore}"
+                            th:class="'score ' + (${res.riskGrade == '높음'} ? 'high' : (${res.riskGrade == '보통'} ? 'medium' : 'low'))">82</span>
+                                </td>
+
+                                <td th:text="${res.mainSignals}">계획 부족, 재고 부족</td>
+
+                                <td>
+                      <span th:text="${res.reviewDirection}"
+                            th:class="'tag ' + (${res.riskGrade == '높음'} ? 'danger' : (${res.riskGrade == '보통'} ? 'warning' : 'good-tag'))">생산계획 상향</span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <div class="table-footer">
+                        <span><i class="fa-solid fa-circle-info"></i> 분석 기준: 현재 시점 입력 실시간 연산 데이터 기준</span>
+                        <span th:text="'최종 분석 시간: ' + ${#temporals.format(#temporals.createNow(), 'yyyy.MM.dd HH:mm')}">2026.05.20 14:32</span>
+                    </div>
+                </section>
+
+                <aside class="risk-panel">
+                    <h3><i class="fa-regular fa-lightbulb"></i> 이번 달 주요 리스크 레포트</h3>
+
+                    <div class="risk-note red-dot">
+                        <p><b>냉연강판(CR)</b>은 재고 차이가 마이너스로 나타나 조속한 생산 스케줄 상향 검토가 요망됩니다.</p>
+                    </div>
+
+                    <div class="risk-note orange-dot">
+                        <p><b>열연강판(HR)</b>은 예측 수요 상승 신호가 감지되었으나 설정한 목표 재고 방어선은 충족합니다.</p>
+                    </div>
+
+                    <div class="risk-note green-dot">
+                        <p><b>아연도강판(GI)</b>은 수급 계획 여유가 확인되어 안전 권역 내에서 모니터링 중입니다.</p>
+                    </div>
+
+                    <div class="risk-help">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <p>분석 결과 명세의 품목명을 클릭하시거나 대시보드 메뉴의 '품목 리스크 상세'로 이동하시면 상세 인자 흐름을 추적할 수 있습니다.</p>
+                    </div>
+                </aside>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

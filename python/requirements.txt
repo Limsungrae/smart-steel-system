@@ -1,0 +1,12 @@
+# 데이터 처리 및 수식 계산
+numpy
+pandas
+openpyxl
+
+# 머신러닝 모델링 (pkl 파일 로드 및 예측)
+scikit-learn
+xgboost
+lightgbm
+
+# 설정 파일 로드 및 유틸리티
+pyyaml

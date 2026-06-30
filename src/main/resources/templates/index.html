@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteelForecast</title>
+
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+
+<header class="header">
+    <a href="index.html" class="logo">
+        <img src="steel-logo.png" alt="SteelForecast Logo">
+    </a>
+
+    <nav>
+        <ul class="menu">
+            <li><a href="#">대시보드</a></li>
+            <li><a href="#">리스크 점검</a></li>
+            <li><a href="#">품목 리스크 상세</a></li>
+            <li><a href="#">마이페이지</a></li>
+        </ul>
+    </nav>
+
+    <div class="auth-buttons">
+        <a href="login.html" class="login-link">로그인</a>
+        <a href="signup.html" class="signup-btn">회원가입</a>
+    </div>
+</header>
+
+<main>
+
+    <section class="hero">
+        <div class="hero-text">
+            <h1>
+                AI 기반 철강 수요 예측으로<br>
+                더 정확한 생산·재고 전략을
+            </h1>
+
+            <p>
+                철강 판재류 데이터를 분석하여 미래 수요를 예측하고,<br>
+                합리적인 재고 의사결정을 지원합니다.
+            </p>
+
+            <div class="hero-buttons">
+                <a href="#" class="primary-btn">
+                    대시보드 바로가기 <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <a href="#" class="secondary-btn">예측 분석 보기</a>
+            </div>
+        </div>
+
+        <div class="dashboard-preview">
+            <div class="preview-header">
+                <h2>대시보드</h2>
+                <span>2025.05</span>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <p>총 예상 수요량</p>
+                    <h3>1,234.5</h3>
+                    <span>▲ 8.2%</span>
+                </div>
+
+                <div class="kpi-card">
+                    <p>전월 대비 변화율</p>
+                    <h3>+8.2%</h3>
+                    <span>▲ 1.5%</span>
+                </div>
+
+                <div class="kpi-card">
+                    <p>최대 수요 품목</p>
+                    <h3>열연강판</h3>
+                    <span>567.8 만톤</span>
+                </div>
+
+                <div class="kpi-card">
+                    <p>예측 정확도</p>
+                    <h3>91.3%</h3>
+                    <span>▲ 2.4%</span>
+                </div>
+            </div>
+
+            <div class="chart-box">
+                <div class="chart-title">
+                    <strong>전체 수요량 추이</strong>
+                    <small>실제 수요량 / 예측 수요량</small>
+                </div>
+
+                <div class="risk-preview-box">
+    <div class="risk-preview-title">
+        <strong>품목별 위험 현황</strong>
+        <span>2025.05 기준</span>
+    </div>
+
+    <div class="risk-preview-row">
+        <p>열연강판</p>
+        <span class="risk-danger">위험</span>
+        <b>-147.5 만톤</b>
+    </div>
+
+    <div class="risk-preview-row">
+        <p>냉연강판</p>
+        <span class="risk-danger">위험</span>
+        <b>-111.2 만톤</b>
+    </div>
+
+    <div class="risk-preview-row">
+        <p>아연도강판</p>
+        <span class="risk-warning">주의</span>
+        <b>-48.6 만톤</b>
+    </div>
+</div>
+
+                <div class="fake-chart interactive-chart">
+                    <svg viewBox="0 0 600 200" preserveAspectRatio="none">
+                        <polyline
+                                class="actual-line"
+                                points="0,120 80,130 160,100 240,125 320,75 400,95 480,80 600,110"
+                        />
+                        <polyline
+                                class="forecast-line"
+                                points="0,135 80,120 160,115 240,105 320,100 400,90 480,105 600,70"
+                        />
+                    </svg>
+
+                    <div class="chart-hover-line"></div>
+                    <div class="chart-focus"></div>
+
+                    <div class="chart-tooltip">
+                        <strong class="tooltip-date">2025.05</strong>
+                        <p>실제 수요량 <b class="tooltip-actual">1,180</b> 만톤</p>
+                        <p>예측 수요량 <b class="tooltip-forecast">1,234.5</b> 만톤</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="feature-section">
+        <div class="feature-card">
+            <div class="icon-box"><i class="fa-solid fa-chart-simple"></i></div>
+            <h3>AI 예측 분석</h3>
+            <p>시계열 데이터와 외부 지표를 기반으로 정확한 수요 예측을 제공합니다.</p>
+            <a href="#">예측 분석 바로가기 <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-box"><i class="fa-solid fa-table-list"></i></div>
+            <h3>품목별 상세 분석</h3>
+            <p>열연강판, 냉연강판, 아연도강판의 수요 추이와 전망을 확인하세요.</p>
+            <a href="#">품목별 상세 보기 <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
+            <h3>데이터 시각화</h3>
+            <p>직관적인 차트와 그래프로 핵심 인사이트를 빠르게 파악하세요.</p>
+            <a href="#">대시보드 보기 <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-box"><i class="fa-solid fa-user"></i></div>
+            <h3>마이페이지</h3>
+            <p>나의 관심 품목과 리포트를 관리하고 맞춤형 정보를 받아보세요.</p>
+            <a href="#">마이페이지 바로가기 <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <section class="data-section">
+        <div class="table-card">
+            <div class="section-title">
+                <h2>주요 품목 예측 수요</h2>
+                <a href="#">전체 보기 <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+
+            <table>
+                <thead>
+                <tr>
+                    <th>품목</th>
+                    <th>2025.05 예측</th>
+                    <th>전월 대비</th>
+                    <th>전년 동월 대비</th>
+                    <th>추이</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr>
+                    <td>열연강판</td>
+                    <td>567.8</td>
+                    <td class="up">▲ 9.3%</td>
+                    <td class="up">▲ 6.1%</td>
+                    <td><span class="spark"></span></td>
+                </tr>
+
+                <tr>
+                    <td>냉연강판</td>
+                    <td>321.4</td>
+                    <td class="up">▲ 7.4%</td>
+                    <td class="up">▲ 4.8%</td>
+                    <td><span class="spark"></span></td>
+                </tr>
+
+                <tr>
+                    <td>아연도강판</td>
+                    <td>198.7</td>
+                    <td class="up">▲ 5.6%</td>
+                    <td class="up">▲ 3.2%</td>
+                    <td><span class="spark"></span></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="insight-card">
+            <div class="section-title">
+                <h2>수요 인사이트</h2>
+                <a href="#">전체 보기 <i class="fa-solid fa-arrow-right"></i></a>
+            </div>
+
+            <div class="insight-grid">
+                <div class="mini-chart">
+                    <h4>전월 대비 품목별 수요 변화</h4>
+                    <div class="bars">
+                        <div>
+                            <span style="height:80%"></span>
+                            <p>열연</p>
+                        </div>
+                        <div>
+                            <span style="height:62%"></span>
+                            <p>냉연</p>
+                        </div>
+                        <div>
+                            <span style="height:48%"></span>
+                            <p>아연도</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mini-chart">
+                    <h4>예측 정확도 추이</h4>
+                    <div class="line-mini">
+                        <svg viewBox="0 0 260 110" preserveAspectRatio="none">
+                            <polyline
+                                    points="0,80 50,60 100,55 150,78 210,50 260,35"
+                                    fill="none"
+                                    stroke="#2563eb"
+                                    stroke-width="4"
+                            />
+                        </svg>
+                        <strong>91.3%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="subscribe">
+        <div>
+            <i class="fa-regular fa-envelope"></i>
+            <div>
+                <h3>SteelForecast의 최신 인사이트를 받아보세요</h3>
+                <p>주간 리포트와 시장 트렌드를 이메일로 제공합니다.</p>
+            </div>
+        </div>
+
+        <form>
+            <input type="email" placeholder="이메일을 입력해주세요">
+            <button type="submit">구독하기</button>
+        </form>
+    </section>
+
+</main>
+
+<footer>
+    <div class="footer-logo">
+        <img src="steel-logo2.png" alt="SteelForecast Logo">
+    </div>
+
+    <div class="footer-links">
+        <a href="#">서비스 소개</a>
+        <a href="#">이용약관</a>
+        <a href="#">개인정보처리방침</a>
+        <a href="#">문의하기</a>
+    </div>
+
+    <p>© 2025 SteelForecast. All rights reserved.</p>
+</footer>
+
+<script>
+const chart = document.querySelector(".interactive-chart");
+const hoverLine = document.querySelector(".chart-hover-line");
+const focus = document.querySelector(".chart-focus");
+const tooltip = document.querySelector(".chart-tooltip");
+
+const tooltipDate = document.querySelector(".tooltip-date");
+const tooltipActual = document.querySelector(".tooltip-actual");
+const tooltipForecast = document.querySelector(".tooltip-forecast");
+
+const chartData = [
+    { date: "2024.08", actual: 1050, forecast: 950, x: 0 },
+    { date: "2024.09", actual: 980, forecast: 1020, x: 80 },
+    { date: "2024.10", actual: 1140, forecast: 1060, x: 160 },
+    { date: "2024.11", actual: 1020, forecast: 1100, x: 240 },
+    { date: "2024.12", actual: 1280, forecast: 1130, x: 320 },
+    { date: "2025.01", actual: 1180, forecast: 1160, x: 400 },
+    { date: "2025.02", actual: 1250, forecast: 1080, x: 480 },
+    { date: "2025.05", actual: 1120, forecast: 1234.5, x: 600 }
+];
+
+chart.addEventListener("mousemove", (e) => {
+    const rect = chart.getBoundingClientRect();
+
+    const mouseX = e.clientX - rect.left;
+    const ratioX = mouseX / rect.width;
+    const svgX = ratioX * 600;
+
+    let nearest = chartData[0];
+
+    chartData.forEach(item => {
+        if (Math.abs(item.x - svgX) < Math.abs(nearest.x - svgX)) {
+            nearest = item;
+        }
+    });
+
+    hoverLine.style.left = `${mouseX}px`;
+    hoverLine.style.opacity = 1;
+
+    focus.style.left = `${mouseX}px`;
+    focus.style.top = `100px`;
+    focus.style.opacity = 1;
+
+    tooltip.style.left = `${Math.min(mouseX + 20, rect.width - 220)}px`;
+    tooltip.style.top = `70px`;
+    tooltip.style.opacity = 1;
+    tooltip.style.transform = "translateY(0)";
+
+    tooltipDate.textContent = nearest.date;
+    tooltipActual.textContent = nearest.actual.toLocaleString();
+    tooltipForecast.textContent = nearest.forecast.toLocaleString();
+});
+
+chart.addEventListener("mouseleave", () => {
+    hoverLine.style.opacity = 0;
+    focus.style.opacity = 0;
+    tooltip.style.opacity = 0;
+    tooltip.style.transform = "translateY(8px)";
+});
+</script>
+
+</body>
+</html>

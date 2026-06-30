@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>마이페이지 | SteelForecast</title>
+    <link rel="stylesheet" th:href="@{/css/sidebar.css}" />
+    <link rel="stylesheet" th:href="@{/css/mypage.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+<div class="app">
+
+    <div th:replace="~{sidebar :: sidebarFragment}"></div>
+
+    <main class="main">
+        <header class="topbar">
+            <div class="service-title">
+                <i class="fa-solid fa-chart-simple"></i>
+                <span>AI 생산계획 리스크 점검</span>
+            </div>
+
+            <div class="top-actions">
+                <button class="top-icon bell" type="button">
+                    <i class="fa-regular fa-bell"></i>
+                    <span th:if="${highRiskCount > 0}" th:text="${highRiskCount}">3</span>
+                </button>
+                <div class="user-profile">
+                    <div class="user-icon"><i class="fa-regular fa-user"></i></div>
+                    <div>
+                        <strong th:text="${user.name} + '님'">홍길동님</strong>
+                        <p th:text="${user.department} + ' ' + ${user.position}">생산관리팀 팀장</p>
+                    </div>
+                    <i class="fa-solid fa-chevron-down"></i>
+                </div>
+            </div>
+        </header>
+
+        <section class="content">
+            <div class="page-head">
+                <h1>마이페이지</h1>
+                <p class="desc">개인 프로필 정보와 최근 수행한 AI 검산 및 의사결정 활동 이력을 확인합니다.</p>
+            </div>
+
+            <section class="top-grid">
+                <article class="panel profile-card">
+                    <div class="p-header">
+                        <div class="big-avatar">PM</div>
+                        <div>
+                            <h2 th:text="${user.name}">홍길동</h2>
+                            <p th:text="${user.email}">hong@company.com</p>
+                        </div>
+                        <a th:href="@{/settings}" class="edit-profile-btn"><i class="fa-solid fa-gear"></i> 설정</a>
+                    </div>
+                    <div class="p-body">
+                        <div><span>소속 부서</span><b th:text="${user.department}">생산관리팀</b></div>
+                        <div><span>직책</span><b th:text="${user.position}">팀장</b></div>
+                        <div><span>계정 권한</span><b class="blue-text" th:text="${user.role}">시스템 관리자</b></div>
+                        <div><span>담당 품목군</span><b th:text="${user.assignedItems}">HR, CR, GI</b></div>
+                    </div>
+                </article>
+
+                <article class="panel activity-card">
+                    <h2>최근 나의 활동</h2>
+                    <div class="activity-timeline">
+                        <div class="activity-item" th:each="act : ${recentActivities}">
+                            <div class="act-icon"><i class="fa-regular fa-clipboard"></i></div>
+                            <div class="act-content">
+                                <p>
+                                    <strong th:text="${act.itemCode}" class="item-tag">CR</strong> 품목에 대해
+                                    <span th:text="${act.finalJudgment}" th:class="${act.finalJudgment == '우선 검토'} ? 'red-text' : 'blue-text'">우선 검토</span> 판정을 내리고 이력을 저장했습니다.
+                                </p>
+                                <span class="act-time" th:text="${#temporals.format(act.savedAt, 'yyyy.MM.dd HH:mm')}">2026.05.20 14:32</span>
+                            </div>
+                        </div>
+
+                        <div class="empty-activity" th:if="${#lists.isEmpty(recentActivities)}">
+                            <p>최근 수행한 의사결정 저장 이력이 없습니다.</p>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <section class="bottom-grid">
+                <article class="panel download-card" id="download-section">
+                    <h2>최근 다운로드 내역</h2>
+                    <div class="download-list">
+                        <div th:each="file : ${downloadFiles}">
+                            <i th:class="${file.type == 'pdf'} ? 'fa-solid fa-file-pdf pdf' : 'fa-solid fa-file-excel excel'"></i>
+                            <span th:text="${file.fileName}">2026-05 생산계획 검산 리포트.pdf</span>
+                            <b th:text="${#temporals.format(file.createdHour, 'yyyy.MM.dd HH:mm')}">2026.04.30 14:32</b>
+                            <em th:text="${file.fileSize}">2.4 MB</em>
+                            <a th:href="@{/download/{id}(id=${file.id})}"><i class="fa-solid fa-download"></i></a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="panel shortcut-card">
+                    <h2>빠른 바로가기</h2>
+                    <div class="shortcut-list">
+                        <a th:href="@{/plan/input}"><i class="fa-regular fa-pen-to-square blue-icon"></i><span>계획/재고 입력</span></a>
+                        <a th:href="@{/plan/result}"><i class="fa-solid fa-chart-simple navy-icon"></i><span>검산 결과 대시보드</span></a>
+                        <a th:href="@{/history/list}"><i class="fa-solid fa-history green-icon"></i><span>검토 이력 조회</span></a>
+                    </div>
+                </article>
+            </section>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/sidebar.js}"></script>
+</body>
+</html>

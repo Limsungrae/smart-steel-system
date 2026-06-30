@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<aside class="sidebar" th:fragment="sidebarFragment">
+    <a th:href="@{/dashboard}" class="logo">
+        <img th:src="@{/images/steel-logo2.png}" alt="SteelForecast Logo">
+    </a>
+
+    <p class="platform-text">AI 기반 생산·재고 리스크 모니터링 시스템</p>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav class="side-menu">
+        <a th:href="@{/dashboard}" class="menu-item" data-page="dashboard">
+            <i class="fa-solid fa-house"></i>
+            <span>대시보드</span>
+        </a>
+
+        <div class="menu-group open" id="riskMenu">
+            <button type="button" class="menu-item group-title" id="riskToggle">
+                <i class="fa-solid fa-clipboard-check"></i>
+                <span>리스크 점검</span>
+                <i class="fa-solid fa-chevron-up arrow"></i>
+            </button>
+
+            <div class="sub-menu-wrap">
+                <a th:href="@{/plan/input}" class="sub-menu" data-page="plan-input">운영 기준 입력</a>
+                <a th:href="@{/plan/result}" class="sub-menu" data-page="risk-result">리스크 분석 결과</a>
+                <a th:href="@{/history/list}" class="sub-menu" data-page="review-history">검토 이력</a>
+            </div>
+        </div>
+
+        <a th:href="@{/item/detail}" class="menu-item" data-page="item-detail">
+            <i class="fa-solid fa-cube"></i>
+            <span>품목 리스크 상세</span>
+        </a>
+
+        <a th:href="@{/settings}" class="menu-item" data-page="settings">
+            <i class="fa-solid fa-gear"></i>
+            <span>설정</span>
+        </a>
+
+        <a th:href="@{/mypage}" class="menu-item" data-page="mypage">
+            <i class="fa-regular fa-user"></i>
+            <span>마이페이지</span>
+        </a>
+    </nav>
+
+    <form th:action="@{/logout}" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn" style="display: flex;">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            로그아웃
+        </button>
+    </form>
+</aside>
