@@ -281,11 +281,8 @@ def build_item_risk_result(
 def build_risk_dashboard(item_results):
     """
     여러 품목의 리스크 결과를 대시보드 형태로 집계
-
-    리스크 분석 결과 대시보드의 KPI 카드와 품목별 우선순위 테이블에 사용
-
-    대시보드 = 요약 KPI + 리스크 점수순 품목 리스트
     """
+
     sorted_results = sorted(
         item_results,
         key=lambda row: row["risk_score"],
@@ -295,26 +292,48 @@ def build_risk_dashboard(item_results):
     for idx, row in enumerate(sorted_results, start=1):
         row["priority_rank"] = idx
 
+    high_count = 0
+    normal_count = 0
+    low_count = 0
+
+    for row in sorted_results:
+
+        if row["priority_level"] == "높음":
+            high_count += 1
+
+        elif row["priority_level"] == "보통":
+            normal_count += 1
+
+        else:
+            low_count += 1
+
     return {
+
         "summary": {
-            "total_items": len(sorted_results),
-            "high_priority_count": sum(
-                row["priority_level"] == "높음"
-                for row in sorted_results
-            ),
-            "demand_signal_count": sum(
-                "수요 증가" in row["risk_signals"]
-                or "수요 감소" in row["risk_signals"]
-                for row in sorted_results
-            ),
+
+            # main.py에서 사용하는 값
+            "total_items_count": len(sorted_results),
+
+            "high_risk_count": high_count,
+
+            "normal_risk_count": normal_count,
+
+            "keep_plan_count": low_count,
+
             "stock_risk_count": sum(
                 row["stock_gap"] < 0
                 for row in sorted_results
             ),
-            "normal_monitoring_count": sum(
-                row["review_direction"] == "모니터링"
+
+            "demand_signal_count": sum(
+                (
+                    "수요 증가" in row["risk_signals"] or
+                    "수요 감소" in row["risk_signals"]
+                )
                 for row in sorted_results
-            ),
+            )
         },
-        "items": sorted_results,
+
+        "items": sorted_results
+
     }

@@ -4,24 +4,25 @@ import com.smartsteel.platform.service.PythonExecutionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
 @Controller
 @RequiredArgsConstructor
 public class ForecastController {
 
     private final PythonExecutionService pythonExecutionService;
 
-    /**
-     * AI 예측 실행
-     */
     @GetMapping("/forecast/run")
     public String runForecast() {
 
-        System.out.println("===== AI 예측 시작 =====");
+        System.out.println("========== Python AI 실행 ==========");
 
-        pythonExecutionService.runPythonModel();
+        String result = pythonExecutionService.runPythonModel();
 
-        System.out.println("===== AI 예측 완료 =====");
+        System.out.println(result);
 
+        System.out.println("========== AI 종료 ==========");
+
+        // AI 실행 끝나면 Dashboard 이동
         return "redirect:/dashboard";
     }
 

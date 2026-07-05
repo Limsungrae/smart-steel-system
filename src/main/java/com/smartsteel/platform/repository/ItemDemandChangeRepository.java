@@ -8,6 +8,7 @@ import java.util.List;
 public interface ItemDemandChangeRepository
         extends JpaRepository<ItemDemandChange, Long> {
 
-    List<ItemDemandChange> findByTargetMonth(String targetMonth);
+    List<ItemDemandChange>
+    findByTargetMonth(String targetMonth);
 
 }

@@ -34,8 +34,10 @@
                 <p class="desc">품목별 생산계획, 재고 기준, 시장점유율을 입력하고 AI 검산을 실행합니다.</p>
             </div>
 
-            <form th:action="@{/demand-input/save}" th:object="${inputForm}" method="post">
-                <div class="main-grid">
+            <form th:action="@{/plan/verify}"
+                  method="post"
+                  th:object="${inputForm}">method="post">
+            <div class="main-grid">
                     <section class="panel table-card">
                         <div class="card-head">
                             <h2>운영 기준 데이터 설정</h2>

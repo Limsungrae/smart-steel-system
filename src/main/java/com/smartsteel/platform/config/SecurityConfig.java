@@ -30,7 +30,8 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login/process") // ⚡ HTML 폼의 action과 일치시켜 시큐리티가 가로채도록 합니다.
-                        .defaultSuccessUrl("/demand-input", true)                        .permitAll()
+                        .defaultSuccessUrl("/plan", true)                      .permitAll()
+
                 )
 
                 // 4. 로그아웃 설정

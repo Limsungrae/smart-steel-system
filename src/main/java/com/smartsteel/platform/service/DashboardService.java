@@ -16,41 +16,35 @@ public class DashboardService {
     private final ItemDemandChangeRepository itemDemandChangeRepository;
     private final DashboardInsightRepository dashboardInsightRepository;
 
-    /**
-     * 대시보드 상단 요약 조회
-     */
-    public ForecastSummary getSummary(String targetMonth) {
+    private final String TARGET_MONTH = "2026-05";
+
+    public ForecastSummary getSummary() {
 
         return forecastSummaryRepository
-                .findByTargetMonth(targetMonth)
+                .findTopByTargetMonthOrderByIdDesc(TARGET_MONTH)
                 .orElse(null);
+
     }
 
-    /**
-     * 품목별 리스크 조회
-     */
-    public List<ItemRiskStatus> getRiskStatus(String targetMonth) {
+    public List<ItemRiskStatus> getRiskStatus() {
 
         return itemRiskStatusRepository
-                .findByTargetMonth(targetMonth);
+                .findByTargetMonth(TARGET_MONTH);
+
     }
 
-    /**
-     * 수요 변화 차트 조회
-     */
-    public List<ItemDemandChange> getChartData(String targetMonth) {
+    public List<ItemDemandChange> getChartData() {
 
         return itemDemandChangeRepository
-                .findByTargetMonth(targetMonth);
+                .findByTargetMonth(TARGET_MONTH);
+
     }
 
-    /**
-     * AI 인사이트 조회
-     */
-    public List<DashboardInsight> getInsights(String targetMonth) {
+    public List<DashboardInsight> getInsights() {
 
         return dashboardInsightRepository
-                .findByTargetMonth(targetMonth);
+                .findByTargetMonth(TARGET_MONTH);
+
     }
 
 }

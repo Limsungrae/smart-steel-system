@@ -8,6 +8,7 @@ import java.util.List;
 public interface ItemRiskStatusRepository
         extends JpaRepository<ItemRiskStatus, Long> {
 
-    List<ItemRiskStatus> findByTargetMonth(String targetMonth);
+    List<ItemRiskStatus>
+    findByTargetMonth(String targetMonth);
 
 }

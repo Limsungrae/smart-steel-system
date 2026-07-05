@@ -8,6 +8,7 @@ import java.util.List;
 public interface DashboardInsightRepository
         extends JpaRepository<DashboardInsight, Long> {
 
-    List<DashboardInsight> findByTargetMonth(String targetMonth);
+    List<DashboardInsight>
+    findByTargetMonth(String targetMonth);
 
 }

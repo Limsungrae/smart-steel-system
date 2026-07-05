@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface ForecastSummaryRepository
-        extends JpaRepository<ForecastSummary, String> {
-    Optional<ForecastSummary> findByTargetMonth(String targetMonth);
+        extends JpaRepository<ForecastSummary, Long> {
+
+
+    Optional<ForecastSummary>
+    findTopByTargetMonthOrderByIdDesc(String targetMonth);
 
 }
