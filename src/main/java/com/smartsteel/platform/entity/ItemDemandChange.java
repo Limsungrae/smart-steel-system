@@ -1,7 +1,16 @@
 package com.smartsteel.platform.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "item_demand_change")
@@ -12,40 +21,19 @@ import lombok.*;
 @Builder
 public class ItemDemandChange {
 
-    // ============================
-    // 기본키
-    // ============================
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
-    // ============================
-    // 예측 기준월
-    // ============================
     @Column(nullable = false)
     private String targetMonth;
 
-
-    // ============================
-    // 품목명
-    // ============================
     @Column(nullable = false)
     private String itemName;
 
-
-    // ============================
-    // 최근 평균 대비 수요 증감률(%)
-    // ============================
     @Column(nullable = false)
     private Double changeRate;
 
-
-    // ============================
-    // 막대그래프 높이
-    // (Frontend 표시용)
-    // ============================
     @Column(nullable = false)
     private Integer barHeight;
-
 }
