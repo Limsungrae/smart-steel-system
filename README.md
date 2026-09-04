@@ -22,7 +22,7 @@
 
 ## 1. 프로젝트 소개
 
-Smart Steel System은 철강재의 미래 수요를 예측한 결과와 회사의 생산계획·현재 재고·목표 재고를 함께 비교하여 **검토가 필요한 품목을 빠르게 선별하기 위한 웹 기반 모니터링 시스템**입니다.
+Smart Steel System은 철강재의 미래 수요예측 결과와 회사의 생산계획·현재 재고·목표 재고를 함께 비교하여 **검토가 필요한 품목을 빠르게 선별하기 위한 웹 기반 모니터링 시스템**입니다.
 
 AI가 생산계획을 대신 결정하는 것이 아니라, 담당자가 세운 기존 계획을 기준으로 수요예측 결과와 재고 상황을 함께 확인하여 **어떤 품목을 먼저 검토해야 하는지 판단할 수 있도록 지원하는 것**을 목표로 했습니다.
 
@@ -73,6 +73,7 @@ AI가 생산계획을 대신 결정하는 것이 아니라, 담당자가 세운 
 - Python 분석 결과를 MySQL에 저장하고 다시 Spring Data JPA로 조회하는 흐름 통합
 - Dashboard용 요약·품목별 위험도·수요 변화·인사이트 데이터 조회 구현
 - Spring Security 기반 로그인/회원가입 및 BCrypt 비밀번호 해싱 적용
+- DB 접속정보 환경변수화 및 공개 저장소 설정 정리
 - 팀원이 구현한 프론트엔드 화면과 ML 예측 모듈을 Spring 프로젝트에 통합
 
 > **역할 범위**  
@@ -137,10 +138,8 @@ DashboardService
 Dashboard
 ```
 
-> **설계 포인트**
-> ML 예측 코드를 Java로 다시 구현하지 않고 기존 Python 모듈을 유지한 채,
-> Spring Boot가 실행 흐름을 제어하고 MySQL을 공통 데이터 계층으로 사용하도록 통합했습니다.
-
+> **설계 포인트**  
+> ML 예측 코드를 Java로 다시 구현하지 않고 기존 Python 모듈을 유지한 채, Spring Boot가 실행 흐름을 제어하고 MySQL을 공통 데이터 계층으로 사용하도록 통합했습니다.
 
 ---
 
@@ -170,8 +169,6 @@ UserRepository
 MySQL users
 ```
 
----
-
 ### 6.2 생산계획·재고 입력
 
 사용자는 HR / CR / GI 품목별로 다음 값을 입력합니다.
@@ -185,11 +182,9 @@ MySQL users
 
 현재 프로젝트는 한 번의 검산 결과를 기준으로 동작하기 때문에 새로운 입력 시 기존 운영 기준 데이터를 삭제한 뒤 최신 입력값을 저장하도록 구현했습니다.
 
----
-
 ### 6.3 Python 예측 모듈 실행
 
-Spring 애플리케이션 내부에서 ML 모델 코드를 직접 다시 구현하지 않고, 기존 Python 예측 모듈을 별도 프로세스로 실행하도록 구성했습니다.
+Spring 애플리케이션 내부에서 ML 모델 코드를 다시 구현하지 않고 기존 Python 예측 모듈을 별도 프로세스로 실행하도록 구성했습니다.
 
 ```java
 ProcessBuilder processBuilder =
@@ -204,8 +199,6 @@ int exitCode = process.waitFor();
 
 이 방식으로 Java 웹 애플리케이션과 Python 예측 코드를 연결했습니다.
 
----
-
 ### 6.4 예측 결과 저장
 
 Python 모듈은 `demand_input` 데이터를 조회하여 분석을 수행한 뒤 결과를 다음 테이블에 저장합니다.
@@ -218,8 +211,6 @@ Python 모듈은 `demand_input` 데이터를 조회하여 분석을 수행한 �
 | `dashboard_insight` | 품목별 주요 분석 메시지 |
 
 Python에서는 Pandas와 SQLAlchemy를 사용해 결과 DataFrame을 MySQL에 저장합니다.
-
----
 
 ### 6.5 리스크 모니터링 Dashboard
 
@@ -289,6 +280,8 @@ JPA Entity와 Repository를 분리해 조회 및 저장 로직을 관리했습�
 ```text
 smart-steel-system/
 ├── .env.example
+├── docs/
+│   └── smart-steel-architecture.svg
 ├── src/main/java/com/smartsteel/platform/
 │   ├── config/
 │   │   └── SecurityConfig.java
@@ -423,7 +416,7 @@ http://localhost:8080/login
 
 ### Java와 Python을 어떻게 연결할 것인가
 
-예측 코드는 Python으로 이미 구성되어 있었고 웹 서비스는 Spring Boot로 개발했습니다.
+예측 코드는 Python으로 구성되어 있었고 웹 서비스는 Spring Boot로 개발했습니다.
 
 초기 프로젝트에서는 별도의 AI API 서버를 추가하는 대신 `ProcessBuilder`를 사용하여 Spring에서 Python 프로세스를 직접 실행하는 방식을 선택했습니다.
 
@@ -451,6 +444,14 @@ Dashboard 데이터 생성
 
 이를 통해 AI 결과를 단순 출력하는 것이 아니라 **백엔드의 생산·재고 관리 흐름 안에서 활용할 수 있도록 연결**했습니다.
 
+### 공개 저장소에서 설정정보를 어떻게 관리할 것인가
+
+초기 개발 단계에서는 로컬 DB 접속정보가 설정 파일과 Python 코드에 직접 포함되어 있었습니다.
+
+공개 저장소 정리 과정에서 Java와 Python 모두 `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` 환경변수를 사용하도록 변경하고, `.env`와 로컬 설정 파일이 Git에 포함되지 않도록 `.gitignore`를 보강했습니다.
+
+또한 회원가입 과정에 남아 있던 비밀번호 디버깅 로그와 Python 캐시 파일을 제거해 공개 저장소 기준으로 코드를 정리했습니다.
+
 ---
 
 ## 12. 현재 한계
@@ -475,8 +476,9 @@ Dashboard 데이터 생성
 
 - 고정된 `targetMonth` 제거 및 사용자 선택형 조회 구현
 - DTO Validation 및 전역 예외 처리 추가
-- 운영/개발 환경 설정 분리
-- 테스트 코드 확대
+- Spring Profile을 활용한 개발/운영 환경 설정 분리
+- CSRF 보호 및 운영 환경 보안 설정 보강
+- Service 계층 단위 테스트와 통합 테스트 확대
 
 ### AI Integration
 
@@ -518,12 +520,13 @@ ML Model
 - Spring Boot MVC 기반 서비스 구조 설계
 - JPA Entity / Repository 기반 데이터 처리
 - Spring Security 인증 흐름 구성
-- 서로 다른 Java와 Python 런타임 연동
+- Java와 Python 런타임 간 프로세스 연동
 - AI 결과를 DB 중심 데이터 파이프라인으로 서비스에 통합
+- 환경변수를 활용한 민감 설정정보 분리
 - 팀원이 만든 프론트엔드와 ML 모듈을 하나의 웹 프로젝트로 통합
 - 프로토타입 구조의 한계와 실제 운영 환경에서 필요한 개선점 분석
 
-특히 **AI 모델 자체를 만드는 것뿐 아니라, 모델 결과를 실제 사용자가 활용할 수 있는 서비스 흐름으로 연결하는 백엔드의 역할**을 경험한 프로젝트입니다.
+특히 **AI 모델 자체를 개발했다고 과장하기보다, 모델 결과를 실제 사용자가 활용할 수 있는 서비스 흐름으로 연결하는 백엔드 역할**에 집중한 프로젝트입니다.
 
 ---
 
