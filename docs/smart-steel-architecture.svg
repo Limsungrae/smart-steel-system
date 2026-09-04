@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900">
+  <defs>
+    <style>
+      .title{font:700 52px Arial,'Noto Sans KR',sans-serif;fill:#0f2f57}.sub{font:400 26px Arial,'Noto Sans KR',sans-serif;fill:#42566f}.lane{fill:#f8fbff;stroke:#c8d9ee;stroke-width:2}.box{fill:#fff;stroke:#6aa5e8;stroke-width:2;rx:16}.spring{fill:#eefaf0;stroke:#63b36d}.db{fill:#eff6ff;stroke:#4f8ee8}.py{fill:#f7f0ff;stroke:#8c68d9}.dash{fill:#effdfa;stroke:#37a4a1}.label{font:700 24px Arial,'Noto Sans KR',sans-serif;fill:#123}.small{font:400 18px Arial,'Noto Sans KR',sans-serif;fill:#405166}.arrow{stroke:#1e73be;stroke-width:4;fill:none;marker-end:url(#arrow)}.n{font:700 20px Arial,sans-serif;fill:white}.circle{fill:#1e73be}
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#1e73be"/></marker>
+  </defs>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <text x="800" y="70" text-anchor="middle" class="title">Smart Steel System 아키텍처</text>
+  <text x="800" y="112" text-anchor="middle" class="sub">Spring Boot · MySQL · Python 연동 기반 생산/재고 리스크 모니터링 시스템</text>
+
+  <rect x="40" y="155" width="260" height="255" class="lane" rx="18"/>
+  <text x="80" y="202" class="label">사용자 입력</text>
+  <text x="80" y="250" class="small">- 생산계획</text><text x="80" y="288" class="small">- 현재 재고</text><text x="80" y="326" class="small">- 목표 재고</text><text x="80" y="364" class="small">- 시장점유율</text>
+
+  <rect x="380" y="155" width="360" height="255" class="box spring" rx="18"/>
+  <text x="420" y="202" class="label">Spring Boot 입력 처리</text>
+  <rect x="445" y="235" width="230" height="48" class="box spring"/><text x="560" y="266" text-anchor="middle" class="small">DemandInputController</text>
+  <rect x="445" y="300" width="230" height="48" class="box spring"/><text x="560" y="331" text-anchor="middle" class="small">DemandInputService</text>
+  <rect x="445" y="365" width="230" height="48" class="box spring"/><text x="560" y="396" text-anchor="middle" class="small">Spring Data JPA</text>
+
+  <rect x="830" y="155" width="310" height="255" class="box db" rx="18"/>
+  <text x="875" y="202" class="label">MySQL 입력 테이블</text>
+  <rect x="890" y="250" width="190" height="58" class="box db"/><text x="985" y="286" text-anchor="middle" class="label">demand_input</text>
+  <text x="865" y="342" class="small">사용자 입력 데이터를 저장하고</text><text x="865" y="372" class="small">Python 분석 모듈이 조회</text>
+
+  <rect x="40" y="500" width="310" height="255" class="box spring" rx="18"/>
+  <text x="75" y="548" class="label">Spring Boot 예측 실행</text>
+  <rect x="75" y="585" width="240" height="48" class="box spring"/><text x="195" y="616" text-anchor="middle" class="small">ForecastController</text>
+  <rect x="75" y="650" width="240" height="58" class="box spring"/><text x="195" y="675" text-anchor="middle" class="small">PythonExecutionService</text><text x="195" y="700" text-anchor="middle" class="small">ProcessBuilder</text>
+
+  <rect x="440" y="500" width="270" height="255" class="box py" rx="18"/>
+  <text x="480" y="548" class="label">Python AI Module</text>
+  <rect x="485" y="585" width="180" height="42" class="box py"/><text x="575" y="612" text-anchor="middle" class="small">python/main.py</text>
+  <rect x="485" y="642" width="180" height="42" class="box py"/><text x="575" y="669" text-anchor="middle" class="small">수요예측</text>
+  <rect x="485" y="699" width="180" height="42" class="box py"/><text x="575" y="726" text-anchor="middle" class="small">리스크 계산</text>
+
+  <rect x="820" y="500" width="300" height="255" class="box db" rx="18"/>
+  <text x="870" y="548" class="label">MySQL 결과 테이블</text>
+  <text x="870" y="600" class="small">forecast_summary</text><text x="870" y="640" class="small">item_risk_status</text><text x="870" y="680" class="small">item_demand_change</text><text x="870" y="720" class="small">dashboard_insight</text>
+
+  <rect x="1210" y="500" width="330" height="255" class="box dash" rx="18"/>
+  <text x="1260" y="548" class="label">Dashboard 조회</text>
+  <rect x="1260" y="590" width="230" height="48" class="box dash"/><text x="1375" y="621" text-anchor="middle" class="small">DashboardService</text>
+  <rect x="1260" y="655" width="230" height="48" class="box dash"/><text x="1375" y="686" text-anchor="middle" class="small">Spring Data JPA</text>
+  <text x="1260" y="733" class="small">요약 지표 · 품목별 위험도 · 차트 · 인사이트</text>
+
+  <path d="M300 280 H380" class="arrow"/><path d="M740 280 H830" class="arrow"/>
+  <path d="M985 410 V455 H195 V500" class="arrow"/>
+  <path d="M350 628 H440" class="arrow"/><path d="M710 628 H820" class="arrow"/><path d="M1120 628 H1210" class="arrow"/>
+  <circle cx="785" cy="280" r="22" class="circle"/><text x="785" y="287" text-anchor="middle" class="n">1</text>
+  <circle cx="300" cy="628" r="22" class="circle"/><text x="300" y="635" text-anchor="middle" class="n">2</text>
+  <circle cx="765" cy="628" r="22" class="circle"/><text x="765" y="635" text-anchor="middle" class="n">3</text>
+  <circle cx="1165" cy="628" r="22" class="circle"/><text x="1165" y="635" text-anchor="middle" class="n">4</text>
+
+  <rect x="70" y="805" width="1460" height="58" class="lane" rx="20"/>
+  <text x="110" y="842" class="label">핵심 흐름:</text>
+  <text x="280" y="842" class="small">사용자 입력 → JPA 저장 → Python 실행(ProcessBuilder) → 예측/리스크 계산 → MySQL 결과 저장 → Dashboard 조회</text>
+</svg>
