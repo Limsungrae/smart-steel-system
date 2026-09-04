@@ -13,17 +13,7 @@ public class ForecastController {
 
     @GetMapping("/forecast/run")
     public String runForecast() {
-
-        System.out.println("========== Python AI 실행 ==========");
-
-        String result = pythonExecutionService.runPythonModel();
-
-        System.out.println(result);
-
-        System.out.println("========== AI 종료 ==========");
-
-        // AI 실행 끝나면 Dashboard 이동
+        pythonExecutionService.runPythonModel();
         return "redirect:/dashboard";
     }
-
 }
