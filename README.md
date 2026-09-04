@@ -98,81 +98,49 @@ AI가 생산계획을 대신 결정하는 것이 아니라, 담당자가 세운 
 
 ## 5. 시스템 아키텍처
 
-```text
-┌───────────────────────────────┐
-│            User               │
-│ 생산계획 / 재고 / 점유율 입력 │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│        Spring Boot Web        │
-│                               │
-│ DemandInputController         │
-│        ↓                      │
-│ DemandInputService            │
-│        ↓                      │
-│ Spring Data JPA               │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│            MySQL              │
-│         demand_input          │
-└───────────────┬───────────────┘
-                │
-                │ /forecast/run
-                ▼
-┌───────────────────────────────┐
-│      PythonExecutionService   │
-│         ProcessBuilder        │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│        Python AI Module       │
-│                               │
-│ python/main.py                │
-│        ↓                      │
-│ 수요예측 + 리스크 계산        │
-│        ↓                      │
-│ SQLAlchemy                    │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│            MySQL              │
-│                               │
-│ forecast_summary              │
-│ item_risk_status              │
-│ item_demand_change            │
-│ dashboard_insight             │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│       DashboardService        │
-│       Spring Data JPA         │
-└───────────────┬───────────────┘
-                │
-                ▼
-┌───────────────────────────────┐
-│          Dashboard            │
-│ 요약 / 위험도 / 변화 / 인사이트│
-└───────────────────────────────┘
-```
+<p align="center">
+  <img src="./docs/smart-steel-architecture.svg"
+       width="100%"
+       alt="Smart Steel System Architecture" />
+</p>
 
 ### 핵심 데이터 흐름
 
-1. 사용자가 HR / CR / GI의 생산계획과 재고 기준을 입력합니다.
-2. `DemandInputController`가 입력값을 전달합니다.
-3. `DemandInputService`가 JPA를 통해 `demand_input` 테이블에 저장합니다.
-4. `/forecast/run` 요청 시 `ForecastController`가 `PythonExecutionService`를 호출합니다.
-5. `PythonExecutionService`가 `ProcessBuilder`로 `python/main.py`를 실행합니다.
-6. Python은 MySQL에서 사용자 입력 데이터를 읽어 예측 및 리스크 계산을 수행합니다.
-7. 계산 결과를 Dashboard 전용 테이블에 저장합니다.
-8. `DashboardService`가 결과 데이터를 다시 조회합니다.
-9. `DashboardController`가 Thymeleaf 화면에 데이터를 전달합니다.
+1. 사용자가 HR / CR / GI 품목의 **생산계획, 현재 재고, 목표 재고, 시장점유율**을 입력합니다.
+2. `DemandInputController`가 요청을 받고 `DemandInputService`를 통해 입력값을 MySQL의 `demand_input` 테이블에 저장합니다.
+3. 입력 저장 후 `/forecast/run`으로 이동하여 `ForecastController`가 예측 실행을 요청합니다.
+4. `PythonExecutionService`가 Java `ProcessBuilder`를 사용해 `python/main.py`를 별도 프로세스로 실행합니다.
+5. Python 모듈은 MySQL에서 입력 데이터를 조회하고 수요예측 및 생산·재고 리스크 계산을 수행합니다.
+6. 분석 결과를 `forecast_summary`, `item_risk_status`, `item_demand_change`, `dashboard_insight` 테이블에 저장합니다.
+7. `DashboardService`가 Spring Data JPA를 통해 결과 데이터를 조회합니다.
+8. `DashboardController`가 조회 결과를 Thymeleaf 화면에 전달하여 Dashboard를 구성합니다.
+
+### Backend ↔ AI 연동 구조
+
+```text
+User Input
+    ↓
+Spring Boot
+    ↓ JPA
+MySQL (demand_input)
+    ↓
+PythonExecutionService
+    ↓ ProcessBuilder
+python/main.py
+    ↓
+Forecast / Risk Analysis
+    ↓ SQLAlchemy
+MySQL (analysis result)
+    ↓ JPA
+DashboardService
+    ↓
+Dashboard
+```
+
+> **설계 포인트**
+> ML 예측 코드를 Java로 다시 구현하지 않고 기존 Python 모듈을 유지한 채,
+> Spring Boot가 실행 흐름을 제어하고 MySQL을 공통 데이터 계층으로 사용하도록 통합했습니다.
+
 
 ---
 
