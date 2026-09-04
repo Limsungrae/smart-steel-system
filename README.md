@@ -100,7 +100,7 @@ AI가 생산계획을 대신 결정하는 것이 아니라, 담당자가 세운 
 ## 5. 시스템 아키텍처
 
 <p align="center">
-  <img src="./docs/smart-steel-architecture.svg"
+  <img src="./docs/smart-steel-architecture.png"
        width="100%"
        alt="Smart Steel System Architecture" />
 </p>
