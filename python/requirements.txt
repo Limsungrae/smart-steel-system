@@ -1,12 +1,16 @@
-# 데이터 처리 및 수식 계산
+# Data processing
 numpy
 pandas
 openpyxl
 
-# 머신러닝 모델링 (pkl 파일 로드 및 예측)
+# Machine learning runtime
 scikit-learn
 xgboost
 lightgbm
 
-# 설정 파일 로드 및 유틸리티
+# Database
+SQLAlchemy
+PyMySQL
+
+# Configuration
 pyyaml
