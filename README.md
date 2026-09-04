@@ -320,6 +320,7 @@ JPA Entity와 Repository를 분리해 조회 및 저장 로직을 관리했습�
 
 ```text
 smart-steel-system/
+├── .env.example
 ├── src/main/java/com/smartsteel/platform/
 │   ├── config/
 │   │   └── SecurityConfig.java
@@ -384,18 +385,49 @@ CHARACTER SET utf8mb4
 COLLATE utf8mb4_unicode_ci;
 ```
 
-`src/main/resources/application.properties`의 DB 계정 정보를 자신의 로컬 환경에 맞게 수정합니다.
+### 3) Database 환경변수 설정
 
-### 3) Python dependency 설치
+Java와 Python 모두 다음 환경변수를 공통으로 사용합니다.
+
+| 변수 | 설명 | 예시 |
+| --- | --- | --- |
+| `DB_HOST` | MySQL 호스트 | `localhost` |
+| `DB_PORT` | MySQL 포트 | `3306` |
+| `DB_NAME` | Database 이름 | `smartsteel` |
+| `DB_USERNAME` | MySQL 사용자명 | `smartsteel_user` |
+| `DB_PASSWORD` | MySQL 비밀번호 | 로컬 환경에서 직접 설정 |
+
+예시 값은 [`.env.example`](./.env.example)에서 확인할 수 있습니다. 실제 비밀번호가 포함된 `.env` 파일은 Git에서 제외됩니다.
+
+Windows PowerShell:
+
+```powershell
+$env:DB_HOST="localhost"
+$env:DB_PORT="3306"
+$env:DB_NAME="smartsteel"
+$env:DB_USERNAME="your_username"
+$env:DB_PASSWORD="your_password"
+```
+
+macOS / Linux:
+
+```bash
+export DB_HOST=localhost
+export DB_PORT=3306
+export DB_NAME=smartsteel
+export DB_USERNAME=your_username
+export DB_PASSWORD=your_password
+```
+
+### 4) Python dependency 설치
 
 ```bash
 pip install -r python/requirements.txt
-pip install sqlalchemy pymysql
 ```
 
 > 현재 `PythonExecutionService`는 시스템의 `python` 명령어를 호출하므로 Python이 PATH에 등록되어 있어야 합니다.
 
-### 4) Spring Boot 실행
+### 5) Spring Boot 실행
 
 Windows:
 
@@ -409,7 +441,7 @@ macOS / Linux:
 ./gradlew bootRun
 ```
 
-### 5) 접속
+### 6) 접속
 
 ```text
 http://localhost:8080/login
@@ -463,9 +495,7 @@ Dashboard 데이터 생성
 - Dashboard의 일부 월 라벨이 임시 데이터로 구성되어 있음
 - Python 실행이 Spring 서버 내부 `ProcessBuilder`에 동기적으로 결합되어 있음
 - Python 프로세스 timeout / retry / 비동기 작업 관리가 구현되어 있지 않음
-- 로컬 개발용 DB 설정이 코드에 포함되어 있어 환경변수 분리가 필요함
 - 개발·테스트 과정에서 CSRF를 비활성화한 상태이므로 운영 환경 보안 설정 보강 필요
-- 디버깅용 로그를 운영 환경 기준으로 정리할 필요가 있음
 
 ---
 
@@ -478,7 +508,6 @@ Dashboard 데이터 생성
 - 고정된 `targetMonth` 제거 및 사용자 선택형 조회 구현
 - DTO Validation 및 전역 예외 처리 추가
 - 운영/개발 환경 설정 분리
-- DB 접속정보 환경변수화
 - 테스트 코드 확대
 
 ### AI Integration
