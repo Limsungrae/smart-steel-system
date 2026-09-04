@@ -1,16 +1,44 @@
 HELP.md
-.gradle
+.gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+### Environment / secrets ###
+.env
+.env.*
+!.env.example
+application-local.properties
+application-secret.properties
+secrets/
+*.pem
+*.key
+
+### Logs ###
+*.log
+logs/
+
+### Python ###
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+env/
+
+### OS ###
+.DS_Store
+Thumbs.db
 
 ### STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 bin/
@@ -18,7 +46,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
